@@ -5,12 +5,23 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // if "next" is in param, use it as the redirect URL
-  let next = searchParams.get('next') ?? '/'
+
+  // DIAGNOSTIC: Log callback parameters
+  // console.log('[OAUTH CALLBACK] Received request')
+  // console.log('[OAUTH CALLBACK] Code:', code ? 'present' : 'missing')
+  // console.log('[OAUTH CALLBACK] Next parameter:', searchParams.get('next'))
+  // console.log('[OAUTH CALLBACK] All search params:', Array.from(searchParams.entries()))
+
+  // Default to dashboard for successful OAuth logins
+  // Use query param if provided, otherwise go to dashboard
+  let next = searchParams.get('next') ?? '/dashboard'
+
+  // Security: ensure the redirect is to a relative URL
   if (!next.startsWith('/')) {
     // if "next" is not a relative URL, use the default
-    next = '/'
+    next = '/dashboard'
   }
+  // console.log('[OAUTH CALLBACK] Final redirect destination:', next)
 
   if (code) {
     const supabase = await createClient()

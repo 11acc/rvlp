@@ -2,6 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
+  // DIAGNOSTIC: Verify proxy.ts is executing
+  // console.log('[PROXY] Running for path:', request.nextUrl.pathname)
+
   let supabaseResponse = NextResponse.next({
     request,
   })

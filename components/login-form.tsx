@@ -26,7 +26,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: `${window.location.origin}/auth/oauth?next=/protected`,
+            // Use NEXT_PUBLIC_SITE_URL in production, fallback to window.location.origin
+            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/oauth`,
         },
       })
 
