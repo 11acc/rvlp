@@ -39,9 +39,14 @@ export async function proxy(request: NextRequest) {
   // Suppress expected "refresh token not found" errors in development
   // These occur when cookies are expired/missing - user will be redirected to login
   if (error && process.env.NODE_ENV === 'development') {
-    const expectedErrors = ['refresh_token_not_found', 'session_not_found']
-    if (!expectedErrors.includes(error.code || '')) {
-      console.error('[PROXY] Unexpected auth error:', error)
+    // Only log if it's NOT one of the expected "no session" errors
+    const isExpectedNoSession =
+      error.code === 'refresh_token_not_found' ||
+      error.code === 'session_not_found' ||
+      error.name === 'AuthSessionMissingError'
+
+    if (!isExpectedNoSession) {
+      console.error('Unexpected auth error:', error)
     }
   }
 
