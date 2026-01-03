@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -43,11 +44,13 @@ export default async function DashboardPage() {
               {profile.avatar_url && (
                 <div>
                   <span className="text-muted-foreground">Avatar:</span>
-                  <img
-                    src={profile.avatar_url}
-                    alt="Avatar"
-                    className="w-16 h-16 rounded-full mt-2"
-                  />
+                  <Avatar>
+                    <AvatarImage
+                      src={profile.avatar_url}
+                      alt="Avatar"
+                    />
+                    <AvatarFallback>?</AvatarFallback>
+                  </Avatar>
                 </div>
               )}
             </div>

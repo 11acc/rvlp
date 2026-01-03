@@ -34,7 +34,16 @@ export async function proxy(request: NextRequest) {
   // This is required for OAuth PKCE flow to work correctly
   // getUser() is fast (~100-300ms) unlike the old getClaims() (90s)
   // Errors are expected for unauthenticated users - that's OK
-  await supabase.auth.getUser()
+  const { error } = await supabase.auth.getUser()
+
+  // Suppress expected "refresh token not found" errors in development
+  // These occur when cookies are expired/missing - user will be redirected to login
+  if (error && process.env.NODE_ENV === 'development') {
+    const expectedErrors = ['refresh_token_not_found', 'session_not_found']
+    if (!expectedErrors.includes(error.code || '')) {
+      console.error('[PROXY] Unexpected auth error:', error)
+    }
+  }
 
   return supabaseResponse
 }
